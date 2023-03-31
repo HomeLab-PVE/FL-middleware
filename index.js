@@ -185,8 +185,7 @@ const analyze = async (page, id) => {
 			}
 		}
 
-		if (!description) {
-			console.info("Description not found for id: " + id);
+		if (description) {
 			const languages = ["romanian", "rum", "rom"];
 			for (let i = 0; i < languages.length; i++) {
 				if (description.includes(languages[i])) {
@@ -197,6 +196,8 @@ const analyze = async (page, id) => {
 			if ((resolutionMatch = description.match(/\d+x\d+|\d+\sx\s\d+|\d+(\*+)\d+\spixels/g))) {
 				result["resolution"] = resolutionMatch[0].replaceAll(" ", "").replace("pixels", "");
 			}
+		} else {
+			console.info("Description not found for id: " + id);
 		}
 
 		try {
