@@ -215,7 +215,10 @@ const analyze = async (page, id) => {
 
 const checkLogin = async (url) => {
 	try {
-		const browser = await puppeteer.launch({ headless: envs.headless });
+		const browser = await puppeteer.launch({ 
+			headless: envs.headless, 
+			args: ['--no-sandbox', '--disable-setuid-sandbox'], 
+		});
 		const page = await browser.newPage();
 		await setPreviousSession(page, url);
 		await page.goto(url);
