@@ -1,7 +1,7 @@
 {
   "name": "FL-middleware",
   "version": "1.0.0",
-  "description": "",
+  "description": "Filelist middleware",
   "main": "index.js",
   "scripts": {
 	"start": "pm2 start ecosystem.config.js",
