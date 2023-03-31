@@ -9,7 +9,7 @@
 	"restart": "pm2 restart FL-middleware",
 	"monitor": "pm2 monit FL-middleware"
   },
-  "author": "LL",
+  "author": "L.Laurentiu <l.laurentiu@ymail.com>",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.0.3",
