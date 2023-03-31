@@ -187,18 +187,16 @@ const analyze = async (page, id) => {
 
 		if (!description) {
 			console.info("Description not found for id: " + id);
-			return result;
-		}
-
-		const languages = ["romanian", "rum", "rom"];
-		for (let i = 0; i < languages.length; i++) {
-			if (description.includes(languages[i])) {
-				result["roSub"] = true;
-				break;
+			const languages = ["romanian", "rum", "rom"];
+			for (let i = 0; i < languages.length; i++) {
+				if (description.includes(languages[i])) {
+					result["roSub"] = true;
+					break;
+				}
 			}
-		}
-		if ((resolutionMatch = description.match(/\d+x\d+|\d+\sx\s\d+|\d+(\*+)\d+\spixels/g))) {
-			result["resolution"] = resolutionMatch[0].replaceAll(" ", "").replace("pixels", "");
+			if ((resolutionMatch = description.match(/\d+x\d+|\d+\sx\s\d+|\d+(\*+)\d+\spixels/g))) {
+				result["resolution"] = resolutionMatch[0].replaceAll(" ", "").replace("pixels", "");
+			}
 		}
 
 		try {
