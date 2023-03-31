@@ -1,0 +1,24 @@
+{
+  "name": "FL-middleware",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+	"start": "pm2 start ecosystem.config.js",
+	"stop": "pm2 stop FL-middleware",
+	"monitor": "pm2 monit FL-middleware"
+  },
+  "author": "LL",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "http-proxy-middleware": "^2.0.6",
+    "node-schedule": "^2.1.1",
+    "path": "^0.12.7",
+    "puppeteer": "^19.8.0",
+    "puppeteer-cluster": "^0.23.0",
+    "sequelize": "^6.30.0",
+    "sqlite3": "^5.1.6"
+  }
+}
