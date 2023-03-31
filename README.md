@@ -2,6 +2,7 @@
 ### Install
 ```
 git clone https://github.com/HomeLab-PVE/FL-middleware.git
+cd FL-middleware
 npm install
 npm install pm2 -g
 ```
