@@ -326,6 +326,13 @@ const flags = [
 	"--disable-setuid-sandbox",
 ];
 
+const cronJobEnd = async (startDate, jobName) => {
+	if (!startDate) {
+		return;
+	}
+	return `Job end: ${jobName}. End date: ${new Date().toISOString()}.`;
+};
+
 (async function () {
 	console.log("Booting...");
 	console.log("Creating directories...");
@@ -345,10 +352,15 @@ const flags = [
 	});
 	console.log("Scheduleing job: update sessions");
 	const updateSessionsCron = schedule.scheduleJob("0 */2 * * *", async () => {
+		const startJob = new Date();
+		console.info(`Job start: updating login sessions. Start date: ${startJob.toISOString()}`);
 		await updateSessions();
+		console.info(await cronJobEnd(startJob, 'updating login sessions'));
 	});
 	console.log("Scheduleing job: update latest entries");
-	const updateLatestCron = schedule.scheduleJob("*/4 * * * *", async () => {
+	const updateLatestCron = schedule.scheduleJob("*/2 * * * *", async () => {
+		const startJob = new Date();
+		console.info(`Job start: updating latest entries. Start date: ${startJob.toISOString()}`);
 		try {
 			const latest = await getLatest();
 			const cachedData = await Cache.findByIds(Object.keys(latest).map((key) => latest[key].id));
@@ -357,6 +369,7 @@ const flags = [
 			if (searchIds.length > 0) {
 				await find(searchIds);
 			}
+			console.info(await cronJobEnd(startJob, 'updating latest entries'));
 		} catch (err) {
 			console.error(err);
 		}
