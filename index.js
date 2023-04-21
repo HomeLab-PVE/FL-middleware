@@ -194,7 +194,7 @@ const analyze = async (page, id) => {
 				}
 			}
 			if ((resolutionMatch = description.match(/\d+x\d+|\d+\sx\s\d+|\d+(\*+)\d+\spixels/g))) {
-				result["resolution"] = resolutionMatch[0].replaceAll(" ", "").replace("*pixels", "");
+				result["resolution"] = resolutionMatch[0].replaceAll(" ", "").replaceAll("*", "x").replace("pixels", "");
 			}
 		} else {
 			console.info("Description not found for id: " + id);
