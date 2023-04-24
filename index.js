@@ -43,14 +43,14 @@ const middleware = createProxyMiddleware({
 						api["middlewareCache"] = false;
 					}
 					if (api.category === "Filme HD-RO") {
-						api.name = api.name + "." + envs.roSubTag;
+						api.name = api.name + ".|" + envs.roSubTag + "|";
 					} else {
 						if (result && result.roSub) {
 							api.name = api.name + "." + envs.roSubTag;
 						}
 					}
 					if (result && result.resolution) {
-						api.name = api.name + ".RESOLUTION-" + result.resolution;
+						api.name = api.name + ".|RESOLUTION-" + result.resolution + "|";
 					}
 					return api;
 				});
