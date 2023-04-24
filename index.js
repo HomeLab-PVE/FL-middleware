@@ -46,7 +46,7 @@ const middleware = createProxyMiddleware({
 						api.name = api.name + ".|" + envs.roSubTag + "|";
 					} else {
 						if (result && result.roSub) {
-							api.name = api.name + "." + envs.roSubTag;
+							api.name = api.name + ".|" + envs.roSubTag + "|";
 						}
 					}
 					if (result && result.resolution) {
