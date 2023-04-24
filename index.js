@@ -50,7 +50,7 @@ const middleware = createProxyMiddleware({
 						}
 					}
 					if (result && result.resolution) {
-						api.name = api.name + "." + result.resolution;
+						api.name = api.name + ".RESOLUTION-" + result.resolution;
 					}
 					return api;
 				});
