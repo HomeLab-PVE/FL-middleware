@@ -364,7 +364,7 @@ const cronJobEnd = async (startDate, jobName) => {
 			const categories = [6, 26, 20, 4, 19, 1, 21, 27, 23];
 			for (let i = 0; i < categories.length; i++) {
 				await new Promise(r => setTimeout(r, 1000));
-				console.log(`Getting latest entries from category ${categories[i]}`);
+				console.log(`Getting latest entries from category: ${categories[i]}`);
 				let latest = await getLatest(categories[i]);
 				let cachedData = await Cache.findByIds(Object.keys(latest).map((key) => latest[key].id));
 				let newData = latest.filter(({ id: newId }) => !cachedData.some(({ id: cachedId }) => newId === cachedId));
