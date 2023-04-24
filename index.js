@@ -172,26 +172,23 @@ const setPreviousSession = async (page, url) => {
 
 const analyze = async (page, id) => {
 	try {
-		let description = "";
-		const selectors = ["#descr", ".quote"];
+		let description = [];
+		const selectors = ["#descr", ".quote", "font[color=red]"];
 		let result = {
 			id: id,
 		};
 
 		for (let i = 0; i < selectors.length; i++) {
 			if ((selector = await page.$(selectors[i], { timeout: 300 })) !== null) {
-				description = await selector.evaluate((desc) => desc.textContent.toLowerCase());
-				break;
+				description.push(await selector.evaluate((desc) => desc.textContent.toLowerCase()));
 			}
 		}
-
+		
+		description = description.join();
+		
 		if (description) {
-			const languages = ["romanian", "rum", "rom"];
-			for (let i = 0; i < languages.length; i++) {
-				if (description.includes(languages[i])) {
-					result["roSub"] = true;
-					break;
-				}
+			if ((subsMatch = description.match(/\b(romanian|rum|rom)\b/g))) {
+				result["roSub"] = true;
 			}
 			if ((resolutionMatch = description.match(/\d+x\d+|\d+\sx\s\d+|\d+(\*+)\d+\spixels/g))) {
 				result["resolution"] = resolutionMatch[0].replaceAll(" ", "").replaceAll("*", "x").replace("pixels", "");
@@ -246,13 +243,12 @@ const updateSessions = async () => {
 	return baseSesions;
 };
 
-const getLatest = async () => {
-	const categories = [6, 26, 20, 4, 19, 1, 21, 27, 23];
-	const limit = 50;
+const getLatest = async (cat) => {
+	const limit = 10;
 	return new Promise((resolve, reject) => {
 		https
 			.get(
-				`${envs.baseUrl}/api.php?username=${envs.user}&passkey=${envs.passkey}&action=latest-torrents&category=${categories.join()}&limit=${limit}`,
+				`${envs.baseUrl}/api.php?username=${envs.user}&passkey=${envs.passkey}&action=latest-torrents&category=${cat}&limit=${limit}`,
 				(res) => {
 					if (res.statusCode < 200 || res.statusCode >= 300) {
 						return reject(new Error("statusCode=" + res.statusCode));
@@ -353,24 +349,29 @@ const cronJobEnd = async (startDate, jobName) => {
 	const server = app.listen(envs.serverPort, envs.serverBindIp, () => {
 		console.log(`Server is running on: ${envs.serverBindIp}:${envs.serverPort}`);
 	});
-	console.log("Scheduleing job: update sessions");
+	console.log("Scheduling job: update sessions");
 	const updateSessionsCron = schedule.scheduleJob("0 */2 * * *", async () => {
 		const startJob = new Date();
 		console.info(`Job start: updating login sessions. Start date: ${startJob.toISOString()}`);
 		await updateSessions();
 		console.info(await cronJobEnd(startJob, 'updating login sessions'));
 	});
-	console.log("Scheduleing job: update latest entries");
-	const updateLatestCron = schedule.scheduleJob("*/2 * * * *", async () => {
+	console.log("Scheduling job: update latest entries");
+	const updateLatestCron = schedule.scheduleJob("*/25 * * * *", async () => {
 		const startJob = new Date();
 		console.info(`Job start: updating latest entries. Start date: ${startJob.toISOString()}`);
 		try {
-			const latest = await getLatest();
-			const cachedData = await Cache.findByIds(Object.keys(latest).map((key) => latest[key].id));
-			const newData = latest.filter(({ id: newId }) => !cachedData.some(({ id: cachedId }) => newId === cachedId));
-			const searchIds = Object.keys(newData).map((key) => newData[key].id);
-			if (searchIds.length > 0) {
-				await find(searchIds);
+			const categories = [6, 26, 20, 4, 19, 1, 21, 27, 23];
+			for (let i = 0; i < categories.length; i++) {
+				await new Promise(r => setTimeout(r, 1000));
+				console.log(`Getting latest entries from category ${categories[i]}`);
+				let latest = await getLatest(categories[i]);
+				let cachedData = await Cache.findByIds(Object.keys(latest).map((key) => latest[key].id));
+				let newData = latest.filter(({ id: newId }) => !cachedData.some(({ id: cachedId }) => newId === cachedId));
+				let searchIds = Object.keys(newData).map((key) => newData[key].id);
+				if (searchIds.length > 0) {
+					await find(searchIds);
+				}
 			}
 			console.info(await cronJobEnd(startJob, 'updating latest entries'));
 		} catch (err) {
