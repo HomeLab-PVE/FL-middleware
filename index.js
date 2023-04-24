@@ -43,14 +43,14 @@ const middleware = createProxyMiddleware({
 						api["middlewareCache"] = false;
 					}
 					if (api.category === "Filme HD-RO") {
-						api.name = api.name + "-|" + envs.roSubTag + "|";
+						api.name = api.name + "." + envs.roSubTag;
 					} else {
 						if (result && result.roSub) {
-							api.name = api.name + "-|" + envs.roSubTag + "|";
+							api.name = api.name + "." + envs.roSubTag;
 						}
 					}
 					if (result && result.resolution) {
-						api.name = api.name + "-|RESOLUTION-" + result.resolution + "|";
+						api.name = api.name + ".RESOLUTION-" + result.resolution;
 					}
 					return api;
 				});
@@ -191,7 +191,7 @@ const analyze = async (page, id) => {
 				result["roSub"] = true;
 			}
 			if ((resolutionMatch = description.match(/\d+x\d+|\d+\sx\s\d+|\d+(\*+)\d+\spixels/g))) {
-				result["resolution"] = resolutionMatch[0].replaceAll(" ", "").replaceAll("*", "x").replace("pixels", "");
+				result["resolution"] = resolutionMatch[0].replaceAll(" ", "").replaceAll("*", "x").replace("pixels", "").replaceAll("x", "|");
 			}
 		} else {
 			console.info("Description not found for id: " + id);
